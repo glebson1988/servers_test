@@ -1,0 +1,6 @@
+development:
+  adapter: 'postgresql'
+  database: 'servers_com'
+  host: 'localhost'
+  username: 'servers'
+  password: 'servers'

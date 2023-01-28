@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+
+gem 'sinatra'
+gem 'activerecord', require: 'active_record'
+gem 'sinatra-activerecord', require: 'sinatra/activerecord'
+gem 'pg'
+gem 'rake'
+gem 'pry'
+gem 'json'
+gem 'net-ping'
+gem 'thin'
+gem 'require_all'
