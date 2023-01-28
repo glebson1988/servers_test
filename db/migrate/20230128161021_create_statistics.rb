@@ -9,7 +9,7 @@ class CreateStatistics < ActiveRecord::Migration[7.0]
       t.float :percentage_lost
       t.datetime :start_time
       t.datetime :end_time
-      t.belongs_to :nodes, foreign_key: true, index: true
+      t.belongs_to :node, foreign_key: true, index: true
       t.timestamps
     end
   end

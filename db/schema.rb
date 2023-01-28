@@ -30,11 +30,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_28_161021) do
     t.float "percentage_lost"
     t.datetime "start_time"
     t.datetime "end_time"
-    t.bigint "nodes_id"
+    t.bigint "node_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["nodes_id"], name: "index_statistics_on_nodes_id"
+    t.index ["node_id"], name: "index_statistics_on_node_id"
   end
 
-  add_foreign_key "statistics", "nodes", column: "nodes_id"
+  add_foreign_key "statistics", "nodes"
 end
