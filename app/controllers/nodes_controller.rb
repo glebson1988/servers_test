@@ -1,14 +1,14 @@
 class NodesController < ApplicationController
 
   post '/nodes' do
-    return { error: 'IP address missing or invalid format. Valid format: 8.8.8.8' }.to_json if params[:ip_address].blank?
+    return { error: 'IP address is missing.' }.to_json if params[:ip_address].blank?
 
     node = Node.new(ip_address: params[:ip_address])
 
     if node.save
       { message: "New node with IP-address #{node.ip_address} was added to statistics" }.to_json
     else
-      { error: 'IP address already exists' }.to_json
+      { error: "#{node.errors.full_messages.join('')}" }.to_json
     end
   end
 
@@ -19,29 +19,49 @@ class NodesController < ApplicationController
   end
 
   delete '/nodes' do
-    node = find_node_by(params[:ip_address])
-
-    return { error: 'This IP is not in the database' }.to_json unless node
+    return ip_not_found unless node
 
     node.destroy
+
     { message: 'IP was successfully deleted' }.to_json
   end
 
   get '/statistics' do
-    node = find_node_by(params[:ip_address])
-
-    return { error: 'This IP is not in the database' }.to_json unless node
+    return ip_not_found unless node
 
     if node.statistics.empty?
       { error: "#{node.ip_address} doesn't have statistics" }.to_json
     else
-      # TODO: continue here
+      data = Statistic.where(node: node)
+                      .where("start_time >= ? AND end_time <= ?", params[:start_time], params[:end_time])
+
+      # TODO: return json with data
     end
+  end
+
+  get '/start_ping' do
+    return ip_not_found unless node
+
+    start_ping(node)
+  end
+
+  post '/stop_ping' do
+    return ip_not_found unless node
+
+    stop_ping
   end
 
   private
 
-  def find_node_by(ip_address)
-    Node.find_by_ip_address(ip_address)
+  def node
+    @node ||= Node.find_by_ip_address(params[:ip_address])
   end
+
+  def ip_not_found
+    { error: 'This IP is not in the database' }.to_json
+  end
+
+  def start_ping(node); end
+
+  def stop_ping; end
 end
