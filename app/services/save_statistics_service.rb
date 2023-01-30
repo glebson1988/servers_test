@@ -58,7 +58,7 @@ class SaveStatisticsService
   end
 
   def extract_rtt_values(rtt_lines)
-    rtt_lines.map { |line| line.split("time=")[1].split(" ms")[0].to_f }
+    rtt_lines.map { |line| line.split('time=')[1].split(' ms')[0].to_f }
   end
 
   def calculate_average_rtt(rtt_values)
@@ -72,15 +72,14 @@ class SaveStatisticsService
   end
 
   def calculate_stddev_rtt(rtt_values, average_rtt)
-    Math.sqrt(rtt_values.map { |x| (x - average_rtt) ** 2 }.sum / rtt_values.size)
+    Math.sqrt(rtt_values.map { |x| (x - average_rtt)**2 }.sum / rtt_values.size)
   end
 
   def calculate_packet_loss_rate(output)
     stats_line = output.select { |line| line =~ /^[0-9]+ packets transmitted/ }[0]
-    packets_received = stats_line.split(",")[1].split(" ")[0].to_i
-    packets_transmitted = stats_line.split(" ")[0].to_i
+    packets_received = stats_line.split(',')[1].split(' ')[0].to_i
+    packets_transmitted = stats_line.split(' ')[0].to_i
 
     (1 - packets_received.to_f / packets_transmitted) * 100
   end
-
 end

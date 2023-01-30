@@ -10,31 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_28_161021) do
+ActiveRecord::Schema[7.0].define(version: 20_230_128_161_021) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension 'plpgsql'
 
-  create_table "nodes", force: :cascade do |t|
-    t.string "ip_address", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["ip_address"], name: "index_nodes_on_ip_address", unique: true
+  create_table 'nodes', force: :cascade do |t|
+    t.string 'ip_address', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['ip_address'], name: 'index_nodes_on_ip_address', unique: true
   end
 
-  create_table "statistics", force: :cascade do |t|
-    t.float "average_rtt"
-    t.float "minimum_rtt"
-    t.float "maximum_rtt"
-    t.float "median_rtt"
-    t.float "standard_deviation"
-    t.float "percentage_lost"
-    t.datetime "start_time"
-    t.datetime "end_time"
-    t.bigint "node_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["node_id"], name: "index_statistics_on_node_id"
+  create_table 'statistics', force: :cascade do |t|
+    t.float 'average_rtt'
+    t.float 'minimum_rtt'
+    t.float 'maximum_rtt'
+    t.float 'median_rtt'
+    t.float 'standard_deviation'
+    t.float 'percentage_lost'
+    t.datetime 'start_time'
+    t.datetime 'end_time'
+    t.bigint 'node_id'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['node_id'], name: 'index_statistics_on_node_id'
   end
 
-  add_foreign_key "statistics", "nodes"
+  add_foreign_key 'statistics', 'nodes'
 end

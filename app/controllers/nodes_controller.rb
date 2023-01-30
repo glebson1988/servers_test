@@ -1,15 +1,14 @@
 class NodesController < ApplicationController
-
   post '/nodes' do
     return { error: 'IP address is missing.' }.to_json if params[:ip_address].blank?
 
     node = Node.new(ip_address: params[:ip_address])
 
     if node.save
-      SaveStatisticsService.new(node:node, start_time: Time.now).execute
+      SaveStatisticsService.new(node: node, start_time: Time.now).execute
       { message: "New node with IP-address #{node.ip_address} was added to statistics" }.to_json
     else
-      { error: "#{node.errors.full_messages.join('')}" }.to_json
+      { error: node.errors.full_messages.join('').to_s }.to_json
     end
   end
 
@@ -31,7 +30,7 @@ class NodesController < ApplicationController
     return ip_not_found unless node
 
     query = Statistic.where(node: node)
-                          .where('start_time >= ? AND end_time <= ?', params[:start_time], params[:end_time])
+                     .where('start_time >= ? AND end_time <= ?', params[:start_time], params[:end_time])
 
     return { message: "No statistics for a given period for #{node.ip_address}" }.to_json if query.empty?
 
@@ -49,15 +48,14 @@ class NodesController < ApplicationController
   end
 
   def node_stat(stat)
-      {
-        node_ip: node.ip_address,
-        average_rtt: stat.average(:average_rtt),
-        minimum_rtt: stat.minimum(:minimum_rtt),
-        maximum_rtt: stat.maximum(:maximum_rtt),
-        median_rtt: stat.average(:median_rtt),
-        standard_deviation: stat.average(:standard_deviation),
-        percentage_lost: stat.average(:percentage_lost)
-      }.to_json
+    {
+      node_ip: node.ip_address,
+      average_rtt: stat.average(:average_rtt),
+      minimum_rtt: stat.minimum(:minimum_rtt),
+      maximum_rtt: stat.maximum(:maximum_rtt),
+      median_rtt: stat.average(:median_rtt),
+      standard_deviation: stat.average(:standard_deviation),
+      percentage_lost: stat.average(:percentage_lost)
+    }.to_json
   end
-
 end
