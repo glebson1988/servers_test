@@ -6,6 +6,7 @@ class NodesController < ApplicationController
     node = Node.new(ip_address: params[:ip_address])
 
     if node.save
+      SaveStatisticsService.new(node:node, start_time: Time.now).execute
       { message: "New node with IP-address #{node.ip_address} was added to statistics" }.to_json
     else
       { error: "#{node.errors.full_messages.join('')}" }.to_json
@@ -29,26 +30,12 @@ class NodesController < ApplicationController
   get '/statistics' do
     return ip_not_found unless node
 
-    if node.statistics.empty?
-      { error: "#{node.ip_address} doesn't have statistics" }.to_json
-    else
-      data = Statistic.where(node: node)
-                      .where("start_time >= ? AND end_time <= ?", params[:start_time], params[:end_time])
+    query = Statistic.where(node: node)
+                          .where('start_time >= ? AND end_time <= ?', params[:start_time], params[:end_time])
 
-      # TODO: return json with data
-    end
-  end
+    return { message: "No statistics for a given period for #{node.ip_address}" }.to_json if query.empty?
 
-  get '/start_ping' do
-    return ip_not_found unless node
-
-    start_ping(node)
-  end
-
-  post '/stop_ping' do
-    return ip_not_found unless node
-
-    stop_ping
+    node_stat(query)
   end
 
   private
@@ -61,7 +48,16 @@ class NodesController < ApplicationController
     { error: 'This IP is not in the database' }.to_json
   end
 
-  def start_ping(node); end
+  def node_stat(stat)
+      {
+        node_ip: node.ip_address,
+        average_rtt: stat.average(:average_rtt),
+        minimum_rtt: stat.minimum(:minimum_rtt),
+        maximum_rtt: stat.maximum(:maximum_rtt),
+        median_rtt: stat.average(:median_rtt),
+        standard_deviation: stat.average(:standard_deviation),
+        percentage_lost: stat.average(:percentage_lost)
+      }.to_json
+  end
 
-  def stop_ping; end
 end

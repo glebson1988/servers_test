@@ -1,5 +1,5 @@
 class Node < ActiveRecord::Base
-  has_many :statistics
+  has_many :statistics, dependent: :destroy
 
   validates :ip_address, presence: true,
             uniqueness: true,
